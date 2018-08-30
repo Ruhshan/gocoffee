@@ -2,39 +2,37 @@ package app
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func Migrate() {
-	db, err := gorm.Open("postgres", Connection)
+type DBInterface struct {
+	DB *gorm.DB
+}
+
+func (i *DBInterface) InitDB() {
+	var err error
+	i.DB, err = gorm.Open("postgres", Connection)
 	if err != nil {
-		fmt.Println(err)
 		panic("failed to connect database")
 	}
-	defer db.Close()
+	//defer db.Close()
+}
+
+func (i *DBInterface) Migrate() {
 
 	fmt.Println("Running Migration for product")
-	db.AutoMigrate(&Product{})
+	i.DB.AutoMigrate(&Product{})
 
 }
 
-func DeleteField(model string, field string) {
-	field = strings.ToLower(field)
-
-	db, err := gorm.Open("postgres", Connection)
-	if err != nil {
-		fmt.Println(err)
-		panic("failed to connect database")
-	}
-	defer db.Close()
+func (i *DBInterface) DeleteField(model string, field string) {
 
 	switch model {
 
 	case "Product":
-		err = db.Model(&Product{}).DropColumn(field).Error
+		err := i.DB.Model(&Product{}).DropColumn(field).Error
 		if err != nil {
 			panic(err)
 		}

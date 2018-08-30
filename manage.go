@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	App "../gocoffee/app"
+	app "../gocoffee/app"
 )
 
 func main() {
@@ -15,13 +15,13 @@ func main() {
 	switch command {
 
 	case "migrate":
-		App.Migrate()
+		m := (*app.DBInterface).Migrate()
 
 	case "delete":
 		model := args[1]
 		field := args[2]
 
-		App.DeleteField(model, field)
+		(DBInterface).DeleteField(model, field)
 	case "runserver":
 		App.Serve()
 
