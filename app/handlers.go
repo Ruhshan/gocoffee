@@ -4,42 +4,44 @@ import (
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/jinzhu/gorm"
 )
 
-func GetProductList(w rest.ResponseWriter, r *rest.Request) {
+type HandlerDBInterface struct {
+	DB *gorm.DB
+}
 
-	dbi := DBInterface{}
-	dbi.InitDB()
-	defer dbi.DB.Close()
+func (i *HandlerDBInterface) InitDB() {
+	var err error
+	i.DB, err = gorm.Open("postgres", Connection)
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+}
+
+func (i *HandlerDBInterface) GetProductList(w rest.ResponseWriter, r *rest.Request) {
 
 	products := []Product{}
-	dbi.DB.Find(&products)
+	i.DB.Find(&products)
 
 	w.WriteJson(&products)
 
 }
 
-func GetProduct(w rest.ResponseWriter, r *rest.Request) {
+func (i *HandlerDBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) {
 	id := r.PathParam("id")
-
-	dbi := DBInterface{}
-	dbi.InitDB()
-	defer dbi.DB.Close()
 
 	product := Product{}
 
-	if dbi.DB.First(&product, id).Error != nil {
+	if i.DB.First(&product, id).Error != nil {
 		rest.NotFound(w, r)
 		return
 	}
 	w.WriteJson(&product)
 }
 
-func PostProduct(w rest.ResponseWriter, r *rest.Request) {
-
-	dbi := DBInterface{}
-	dbi.InitDB()
-	defer dbi.DB.Close()
+func (i *HandlerDBInterface) PostProduct(w rest.ResponseWriter, r *rest.Request) {
 
 	product := Product{}
 
@@ -48,7 +50,7 @@ func PostProduct(w rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 
-	if err := dbi.DB.Save(&product).Error; err != nil {
+	if err := i.DB.Save(&product).Error; err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
