@@ -13,9 +13,7 @@ func main() {
 	command := args[0]
 
 	dbi := app.DBInterface{}
-
 	dbi.InitDB()
-
 	defer dbi.DB.Close()
 
 	switch command {

@@ -8,9 +8,11 @@ func ProductListHandler(w rest.ResponseWriter, r *rest.Request) {
 
 	dbi := DBInterface{}
 	dbi.InitDB()
+	defer dbi.DB.Close()
+
 	products := []Product{}
 	dbi.DB.Find(&products)
-	dbi.DB.Close()
+
 	w.WriteJson(&products)
 
 }

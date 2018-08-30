@@ -17,7 +17,7 @@ func (i *DBInterface) InitDB() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	//defer db.Close()
+
 }
 
 func (i *DBInterface) Migrate() {
