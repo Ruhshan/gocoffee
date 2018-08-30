@@ -8,17 +8,23 @@ import (
 
 func main() {
 
-	cmd := os.Args[1:]
+	args := os.Args[1:]
 
-	if cmd[0] == "migrate" {
+	command := args[0]
+
+	switch command {
+
+	case "migrate":
 		App.Migrate()
-	}
 
-	if cmd[0] == "delete" {
-		model := cmd[1]
-		field := cmd[2]
+	case "delete":
+		model := args[1]
+		field := args[2]
 
 		App.DeleteField(model, field)
+	case "runserver":
+		App.Serve()
+
 	}
 
 }
