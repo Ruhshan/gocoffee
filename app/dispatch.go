@@ -13,7 +13,9 @@ func Serve() {
 	api.Use(rest.DefaultDevStack...)
 
 	router, err := rest.MakeRouter(
-		rest.Get("/products/", ProductListHandler),
+		rest.Get("/product/list/", GetProductList),
+		rest.Get("/product/:id/", GetProduct),
+		rest.Post("/product/", PostProduct),
 	)
 	if err != nil {
 		log.Fatal(err)
