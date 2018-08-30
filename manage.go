@@ -12,18 +12,25 @@ func main() {
 
 	command := args[0]
 
+	dbi := app.DBInterface{}
+
+	dbi.InitDB()
+
+	defer dbi.DB.Close()
+
 	switch command {
 
 	case "migrate":
-		m := (*app.DBInterface).Migrate()
+
+		dbi.Migrate()
 
 	case "delete":
 		model := args[1]
 		field := args[2]
 
-		(DBInterface).DeleteField(model, field)
+		dbi.DeleteField(model, field)
 	case "runserver":
-		App.Serve()
+		app.Serve()
 
 	}
 
