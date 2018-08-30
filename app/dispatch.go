@@ -11,7 +11,7 @@ func Serve() {
 
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
-	dbi := HandlerDBInterface{}
+	dbi := DBInterface{}
 	dbi.InitDB()
 	defer dbi.DB.Close()
 

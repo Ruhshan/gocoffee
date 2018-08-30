@@ -4,23 +4,9 @@ import (
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest/rest"
-	"github.com/jinzhu/gorm"
 )
 
-type HandlerDBInterface struct {
-	DB *gorm.DB
-}
-
-func (i *HandlerDBInterface) InitDB() {
-	var err error
-	i.DB, err = gorm.Open("postgres", Connection)
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-}
-
-func (i *HandlerDBInterface) GetProductList(w rest.ResponseWriter, r *rest.Request) {
+func (i *DBInterface) GetProductList(w rest.ResponseWriter, r *rest.Request) {
 
 	products := []Product{}
 	i.DB.Find(&products)
@@ -29,7 +15,7 @@ func (i *HandlerDBInterface) GetProductList(w rest.ResponseWriter, r *rest.Reque
 
 }
 
-func (i *HandlerDBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) {
+func (i *DBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) {
 	id := r.PathParam("id")
 
 	product := Product{}
@@ -41,7 +27,7 @@ func (i *HandlerDBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) 
 	w.WriteJson(&product)
 }
 
-func (i *HandlerDBInterface) PostProduct(w rest.ResponseWriter, r *rest.Request) {
+func (i *DBInterface) PostProduct(w rest.ResponseWriter, r *rest.Request) {
 
 	product := Product{}
 
