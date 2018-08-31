@@ -2,9 +2,7 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"reflect"
 
 	"github.com/gorilla/mux"
 
@@ -23,14 +21,15 @@ func (i *DBInterface) GetProductList(w http.ResponseWriter, r *http.Request) {
 
 func (i *DBInterface) GetProduct(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-
+	w.Header().Set("Content-Type", "application/json")
 	product := Product{}
-	fmt.Println(id, reflect.TypeOf(id))
-	if i.DB.First(&product, id).Error != nil {
-		w.Write("Not found")
+
+	if err := i.DB.First(&product, id).Error; err != nil {
+
+		http.Error(w, `{"Error": "not found"}`, http.StatusNotFound)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+
 	json.NewEncoder(w).Encode(product)
 }
 
