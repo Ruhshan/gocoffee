@@ -4,27 +4,20 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/gorilla/mux"
 )
 
 func Serve() {
 
-	api := rest.NewApi()
-	api.Use(rest.DefaultDevStack...)
 	dbi := DBInterface{}
 	dbi.InitDB()
 	defer dbi.DB.Close()
 
-	router, err := rest.MakeRouter(
-		rest.Get("/product/list/", dbi.GetProductList),
-		rest.Get("/product/:id/", dbi.GetProduct),
-		rest.Post("/product/", dbi.PostProduct),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	router := mux.NewRouter()
 
-	api.SetApp(router)
-	log.Fatal(http.ListenAndServe(":8000", api.MakeHandler()))
+	router.HandleFunc("/product/list/", dbi.GetProductList).Methods("GET")
+	router.HandleFunc("/product/{id}/", dbi.GetProduct).Methods("GET")
+
+	log.Fatal(http.ListenAndServe(":8000", router))
 
 }

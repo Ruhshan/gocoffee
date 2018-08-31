@@ -1,30 +1,37 @@
 package app
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"reflect"
+
+	"github.com/gorilla/mux"
 
 	"github.com/ant0ine/go-json-rest/rest"
 )
 
-func (i *DBInterface) GetProductList(w rest.ResponseWriter, r *rest.Request) {
+func (i *DBInterface) GetProductList(w http.ResponseWriter, r *http.Request) {
 
 	products := []Product{}
 	i.DB.Find(&products)
 
-	w.WriteJson(&products)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(products)
 
 }
 
-func (i *DBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) {
-	id := r.PathParam("id")
+func (i *DBInterface) GetProduct(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
 
 	product := Product{}
-
+	fmt.Println(id, reflect.TypeOf(id))
 	if i.DB.First(&product, id).Error != nil {
-		rest.NotFound(w, r)
+		w.Write("Not found")
 		return
 	}
-	w.WriteJson(&product)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(product)
 }
 
 func (i *DBInterface) PostProduct(w rest.ResponseWriter, r *rest.Request) {
