@@ -23,6 +23,9 @@ func main() {
 		dbi.Migrate()
 
 	case "delete":
+		/*
+			go run manage.go Product customer
+		*/
 		model := args[1]
 		field := args[2]
 

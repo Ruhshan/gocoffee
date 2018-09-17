@@ -9,7 +9,9 @@ import (
 func (i *DBInterface) GetProductList(w rest.ResponseWriter, r *rest.Request) {
 
 	products := []Product{}
-	i.DB.Find(&products)
+	// := []Customer{}
+
+	i.DB.Preload("Customer").Find(&products)
 
 	w.WriteJson(&products)
 
@@ -20,7 +22,7 @@ func (i *DBInterface) GetProduct(w rest.ResponseWriter, r *rest.Request) {
 
 	product := Product{}
 
-	if i.DB.First(&product, id).Error != nil {
+	if i.DB.Preload("Customer").First(&product, id).Error != nil {
 		rest.NotFound(w, r)
 		return
 	}
@@ -42,4 +44,21 @@ func (i *DBInterface) PostProduct(w rest.ResponseWriter, r *rest.Request) {
 	}
 
 	w.WriteJson(&product)
+}
+
+func (i *DBInterface) PostCustomer(w rest.ResponseWriter, r *rest.Request) {
+
+	customer := Customer{}
+
+	if err := r.DecodeJsonPayload(&customer); err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := i.DB.Save(&customer).Error; err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteJson(&customer)
 }

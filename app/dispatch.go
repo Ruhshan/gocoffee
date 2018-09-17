@@ -19,6 +19,7 @@ func Serve() {
 		rest.Get("/product/list/", dbi.GetProductList),
 		rest.Get("/product/:id/", dbi.GetProduct),
 		rest.Post("/product/", dbi.PostProduct),
+		rest.Post("/customer/", dbi.PostCustomer),
 	)
 	if err != nil {
 		log.Fatal(err)
