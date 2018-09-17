@@ -25,6 +25,9 @@ func (i *DBInterface) Migrate() {
 	fmt.Println("Running Migration for product")
 	i.DB.AutoMigrate(&Product{})
 
+	fmt.Println("Running Migration for Customer")
+	i.DB.AutoMigrate(&Customer{})
+
 }
 
 func (i *DBInterface) DeleteField(model string, field string) {
